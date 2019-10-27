@@ -2,6 +2,7 @@ from PyQt5.uic import loadUiType
 import sys
 from os import path
 from PyQt5.QtWidgets import *
+import PyQt5.QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from tokenizer import *
@@ -19,15 +20,16 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.setupUi(self)
         self.setup_Ui()
         self.init_Buttons()
-        
 
     def setup_Ui(self):
-        pass
+        self.center_window()
+
        
         
       
 
     def center_window(self):
+
         # centering window
         qtRectangle = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
@@ -41,3 +43,17 @@ class MainApp(QMainWindow, FORM_CLASS):
 
     def tokenize(self):
         pass
+        
+
+
+
+
+def main():
+    app = QApplication(sys.argv)
+    window = MainApp()
+    window.show()
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()

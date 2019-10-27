@@ -27,7 +27,7 @@
    <widget class="QPushButton" name="tokenize_button">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>700</x>
       <y>50</y>
       <width>121</width>
       <height>31</height>

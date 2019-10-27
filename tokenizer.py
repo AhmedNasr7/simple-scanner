@@ -20,8 +20,10 @@ class Tokenizer():
         return lines
 
     def split_on_spaces(self, lines): #lines is a list
-        word = lines.split(" ")
-        return word 
+        words = lines.split(" ")
+        return words
+
+
 
     def is_id(self, word):
         match_object = re.match(self.__identif_regex)
@@ -31,6 +33,7 @@ class Tokenizer():
         else:
             return False
 
+
     def is_digit(self, word):
         match_object = re.match(self.__digit_regex )
         begin ,  length = match_object.span()
@@ -38,6 +41,7 @@ class Tokenizer():
             return True
         else:
             return False
+
 
     def is_keyword(self, word):
         pass
