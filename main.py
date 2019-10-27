@@ -38,11 +38,12 @@ class MainApp(QMainWindow, FORM_CLASS):
 
 
     def init_Buttons(self):
-        pass
+        self.tokenize_button.clicked.connect(self.tokenize)
 
 
     def tokenize(self):
-        pass
+        code_text = self.textBox.toPlainText()
+        self.tokenizer = Tokenizer(code_text)
         
 
 

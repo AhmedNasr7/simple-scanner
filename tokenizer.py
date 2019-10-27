@@ -8,6 +8,7 @@ class Tokenizer():
 
     def __init__(self, input):
         ## private attributes
+        
         self.__input = input
         self.__digit_regex = "[0-9]+" # to do signed 
         self.__identif_regex = "[a-zA-Z]+([a-zA-Z]|[0-9])*|([a-zA-Z]|[0-9])*"
