@@ -4,6 +4,8 @@ from os import path
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from tokenizer import *
+
 
 
 FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))
@@ -34,4 +36,8 @@ class MainApp(QMainWindow, FORM_CLASS):
 
 
     def init_Buttons(self):
+        pass
+
+
+    def tokenize(self):
         pass
