@@ -8,12 +8,12 @@ class Tokenizer():
 
     def __init__(self, input):
         ## private attributes
-        
+
         self.__input = input
         self.__digit_regex = "[0-9]+" # to do signed 
         self.__identif_regex = "[a-zA-Z]+([a-zA-Z]|[0-9])*|([a-zA-Z]|[0-9])*"
-        self.__exp_regex = "" # to do 
-        self.__symbols_list = [] # to do 
+        #self.__exp_regex = self.__identif_regex ------>> not working
+        self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':='] 
 
 
     def split_to_lines(self, input):
@@ -47,13 +47,13 @@ class Tokenizer():
     def is_keyword(self, word):
         pass
 
-    def is_exp(self, word):
+    def is_exp(self, word): # to be postponed (state machine, regex is not working)
         pass
 
     def check_word(self, word):
         pass
 
-    def tokenize_exp(self, exp):
+    def tokenize_exp(self, exp): # to be postponed 
         pass
 
     def classify(self, token):
@@ -61,3 +61,26 @@ class Tokenizer():
 
    
 
+
+
+'''
++ 
+then - 
+else *
+end /
+repeat = identifier
+until < (1 or more letters)
+read (
+write )
+;
+:=
+
+
+'''
+
+
+
+
+
+
+## reg1 = '(\+)|(-)|(\*)|(/)|(=)|(<)|(>)|(\()|(;)|(:=)|(\))'
