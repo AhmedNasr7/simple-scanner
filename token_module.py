@@ -1,7 +1,6 @@
 
 
-
-class Token():
+class Token_():
     
     def __init__(self, value, type):
         self.__value = value
