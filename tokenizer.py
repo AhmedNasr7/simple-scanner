@@ -9,7 +9,8 @@ class Tokenizer:
 
         self.__input = input
         self.__digit_regex = "[0-9]+"  # to do signed
-        self.__identif_regex = "[a-zA-Z]+([a-zA-Z]|[0-9])*|([a-zA-Z]|[0-9])*"
+        #self.__identif_regex = "^[a-zA-Z]+([a-(zA-Z]|[0-9])*|([a-zA-Z]|[0-9])*"
+        self.__identif_regex = r"^[^\d\W]\w*\Z"
         # self.__exp_regex = self.__identif_regex ------>> not working
         self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':=']
         self.__keywords_list = []
@@ -32,16 +33,24 @@ class Tokenizer:
         return lines_list # list of lists
 
     def is_id(self, word):
-        match_object = re.match(self.__identif_regex, word)
-        start, length = match_object.span()
+        try:
+            match_object = re.match(self.__identif_regex, word)
+            start, length = match_object.span()
+        except:
+            if match_object == None:
+                return False
         if start == 0 and length == len(word):
             return True
         else:
             return False
 
     def is_digit(self, word):
-        match_object = re.match(self.__digit_regex, word)
-        begin ,  length = match_object.span()
+        try:
+            match_object = re.match(self.__digit_regex, word)
+            begin, length = match_object.span()
+        except:
+            if match_object == None:
+                return False     
         if begin == 0 and length == len(word):
             return True
         else:
@@ -57,17 +66,21 @@ class Tokenizer:
     def is_exp(self, word):  # to be postponed (state machine, regex is not working)
         pass
 
-    def check_word(self, word):
+    def check_word(self, word): # to be checked
         if (not(self.is_keyword(word))) and (not(self.is_digit(word))) and (not(self.is_id(word))) and \
                 (not(word in self.__symbols_list)):
             return False
+        return True
 
     def tokenize_exp(self, exp):  # to be postponed
         pass
 
     def classify(self, token):
         if not(self.check_word(token)):
-            return "error" # will be modified to generate error message
+            #print('error----->', token) # will be modified to generate error message
+            token_obj = Token_(token, 'wrong-token')
+            self.__tokens_list.append(token_obj)
+
         elif self.is_keyword(token):
             token_obj = Token_(token, 'keyword')
             self.__tokens_list.append(token_obj)
@@ -75,8 +88,19 @@ class Tokenizer:
             token_obj = Token_(token, 'identifier')
             self.__tokens_list.append(token_obj)
         elif self.is_digit(token):
-            token_obj = Token_(token, 'digit')
+            token_obj = Token_(token, 'number')
             self.__tokens_list.append(token_obj)
+        elif token in self.__symbols_list:
+            token_obj = Token_(token, 'special symbol')
+            self.__tokens_list.append(token_obj)
+        else:
+            #print('thats weird!----->', token)
+            if token == "\t" or token == "\n" or token == "\r" or token == " ":
+                pass
+            else:
+                token_obj = Token_(token, 'unknown-token')
+                self.__tokens_list.append(token_obj)
+
 
 
     def tokenize(self):
@@ -84,10 +108,14 @@ class Tokenizer:
         lines_list = self.split_on_spaces(lines) # list of lists of words
 
         for line_words in lines_list: # a line_words is a list of words
-           [self.classify(word) for word in line_words] # apply classify function to each word in line_words
+            for word in line_words:
+                self.classify(word)
 
-        print (self.__tokens_list)
-            
+           
+        #printing tokens values and types --> will be replaced by generating it in GUI 
+        for token in self.__tokens_list:
+            print(token.value(), token.type())
+
 
 
         
