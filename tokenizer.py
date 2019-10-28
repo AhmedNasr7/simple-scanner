@@ -1,24 +1,30 @@
 import re  # regex lib
+from PyQt5.QtCore import QThread, QObject, pyqtSlot, pyqtSignal
 from token_module import *
 
 
-class Tokenizer:
+
+class Tokenizer(QObject):
+
+    pass_data_signal = pyqtSignal(list)
 
     def __init__(self, input):
+
+
+        super().__init__()
         # private attributes
 
         self.__input = input
         self.__digit_regex = "[0-9]+"  # to do signed
-        #self.__identif_regex = "^[a-zA-Z]+([a-(zA-Z]|[0-9])*|([a-zA-Z]|[0-9])*"
+
         self.__identif_regex = r"^[^\d\W]\w*\Z"
         # self.__exp_regex = self.__identif_regex ------>> not working
         self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':=']
         self.__keywords_list = []
         self.__tokens_list = []
-        #self.__identif_list = []
-        #self.digit_list = []
+   
 
-        self.tokenize()
+        
 
     def split_to_lines(self, input):
         lines = input.split("\n")
@@ -113,9 +119,15 @@ class Tokenizer:
 
            
         #printing tokens values and types --> will be replaced by generating it in GUI 
-        for token in self.__tokens_list:
-            print(token.value(), token.type())
+        #for token in self.__tokens_list:
+            #print(token.value(), token.type())
 
+        self.send_data()
+
+        
+
+    def send_data(self):
+        self.pass_data_signal.emit(self.__tokens_list)
 
 
         
