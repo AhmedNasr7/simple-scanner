@@ -10,7 +10,10 @@ class Tokenizer:
         self.__digit_regex = "[0-9]+"  # to do signed
         self.__identif_regex = "[a-zA-Z]+([a-zA-Z]|[0-9])*|([a-zA-Z]|[0-9])*"
         # self.__exp_regex = self.__identif_regex ------>> not working
-        self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':='] 
+        self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':=']
+        self.__keywords_list = []
+        self.__identif_list = []
+        self.digit_list = []
 
     def split_to_lines(self, input):
         lines = input.split("\n")
@@ -47,14 +50,22 @@ class Tokenizer:
         pass
 
     def check_word(self, word):
-        if (not(self.is_keyword())) and (not(self.is_digit())) and (not(self.is_exp())) and (not(self.is_id())) and (not(word in self.__symbols_list)):
+        if (not(self.is_keyword())) and (not(self.is_digit())) and (not(self.is_id())) and \
+                (not(word in self.__symbols_list)):
             return False
 
-    def tokenize_exp(self, exp): # to be postponed 
+    def tokenize_exp(self, exp):  # to be postponed
         pass
 
     def classify(self, token):
-        pass
+        if not(self.check_word(token)):
+            return "error"
+        elif self.is_keyword(token):
+            self.__keywords_list.append(token)
+        elif self.is_id(token):
+            self.__identif_list.append(token)
+        elif self.is_digit(token):
+            self.digit_list.append(token)
 
    
 

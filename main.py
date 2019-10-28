@@ -24,10 +24,6 @@ class MainApp(QMainWindow, FORM_CLASS):
     def setup_Ui(self):
         self.center_window()
 
-       
-        
-      
-
     def center_window(self):
 
         # centering window
@@ -36,10 +32,8 @@ class MainApp(QMainWindow, FORM_CLASS):
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
 
-
     def init_Buttons(self):
         self.tokenize_button.clicked.connect(self.tokenize)
-
 
     def tokenize(self):
         code_text = self.textBox.toPlainText()
