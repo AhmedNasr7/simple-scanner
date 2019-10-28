@@ -1,4 +1,5 @@
 import re  # regex lib
+from token import *
 
 
 class Tokenizer:
@@ -12,8 +13,9 @@ class Tokenizer:
         # self.__exp_regex = self.__identif_regex ------>> not working
         self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':=']
         self.__keywords_list = []
-        self.__identif_list = []
-        self.digit_list = []
+        self.__tokens_list = []
+        #self.__identif_list = []
+        #self.digit_list = []
 
     def split_to_lines(self, input):
         lines = input.split("\n")
@@ -59,14 +61,18 @@ class Tokenizer:
 
     def classify(self, token):
         if not(self.check_word(token)):
-            return "error"
+            return "error" # will be modified to generate error message
         elif self.is_keyword(token):
-            self.__keywords_list.append(token)
+            token_obj = Token(token, 'keyword')
+            self.__tokens_list.append(token_obj)
         elif self.is_id(token):
-            self.__identif_list.append(token)
+            token_obj = Token(token, 'identifier')
+            self.__tokens_list.append(token_obj)
         elif self.is_digit(token):
-            self.digit_list.append(token)
+            token_obj = Token(token, 'digit')
+            self.__tokens_list.append(token_obj)
 
+        
    
 
 
