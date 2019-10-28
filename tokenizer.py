@@ -26,7 +26,7 @@ class Tokenizer:
         return words
 
     def is_id(self, word):
-        match_object = re.match(self.__identif_regex)
+        match_object = re.match(self.__identif_regex, word)
         start, length = match_object.span()
         if start == 0 and length == len(word):
             return True
@@ -34,7 +34,7 @@ class Tokenizer:
             return False
 
     def is_digit(self, word):
-        match_object = re.match(self.__digit_regex)
+        match_object = re.match(self.__digit_regex, word)
         begin ,  length = match_object.span()
         if begin == 0 and length == len(word):
             return True
