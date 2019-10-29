@@ -70,16 +70,54 @@ class Tokenizer(QObject):
             return False
 
     def is_exp(self, word):  # to be postponed (state machine, regex is not working)
-        pass
-
-    def check_word(self, word): # to be checked
         if (not(self.is_keyword(word))) and (not(self.is_digit(word))) and (not(self.is_id(word))) and \
                 (not(word in self.__symbols_list)):
-            return False
-        return True
+                if len(word) > 1:
+                    return True
+                else:
+                    return False
+
+
+    def check_word(self, word): 
+        return self.is_exp(word)
+        
 
     def tokenize_exp(self, exp):  # to be postponed
-        pass
+        s = exp
+        symb_found = False
+        while(len(s) > 1):
+            for i in range(len(s)):
+                if s[i] == ":" and i != (len(s) - 1):      
+                    if s[i+1] == '=':
+                        symb_found = True
+                        symbol = ":="
+                        sub = s[0:i - 1]
+                        self.classify(sub)
+                        token_obj = Token_(symbol, 'special symbol')
+                        self.__tokens_list.append(token_obj)
+                        i += 2
+                    else:
+                        self.generate_erorr() 
+                        # break        
+                elif s[i] in self.__symbols_list:
+                    symb_found = True
+                    sub = s[0:i-1]
+                    self.classify(sub) # classify not symbol   
+                    symbol = s[i]
+                    token_obj = Token_(symbol, 'special symbol')
+                    self.__tokens_list.append(token_obj)
+                else:
+                    pass
+            
+                if symb_found:
+                    s = s[i:]
+                    break
+                
+                
+    
+
+        
+        
 
     def classify(self, token):
         if not(self.check_word(token)):
@@ -100,8 +138,10 @@ class Tokenizer(QObject):
             token_obj = Token_(token, 'special symbol')
             self.__tokens_list.append(token_obj)
         else:
-            #print('thats weird!----->', token)
-            if token == "\t" or token == "\n" or token == "\r" or token == " ":
+            if (self.is_exp(token)):
+                self.tokenize_exp(token)
+
+            elif token == "\t" or token == "\n" or token == "\r" or token == " ":
                 pass
             else:
                 token_obj = Token_(token, 'unknown-token')
@@ -129,26 +169,14 @@ class Tokenizer(QObject):
     def send_data(self):
         self.pass_data_signal.emit(self.__tokens_list)
 
+    
+    def generate_erorr(self):
+        pass 
+
 
         
    
 
-
-
-'''
-+ 
-then - 
-else *
-end /
-repeat = identifier
-until < (1 or more letters)
-read (
-write )
-;
-:=
-
-
-'''
 
 
 
