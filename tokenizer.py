@@ -20,7 +20,7 @@ class Tokenizer(QObject):
         self.__identif_regex = r"^[^\d\W]\w*\Z"
         # self.__exp_regex = self.__identif_regex ------>> not working
         self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':=']
-        self.__keywords_list = []
+        #self.__keywords_list = []
         self.__tokens_list = []
    
 
@@ -79,55 +79,80 @@ class Tokenizer(QObject):
 
 
     def check_word(self, word): 
-        return self.is_exp(word)
+        if (not(self.is_keyword(word))) and (not(self.is_digit(word))) and (not(self.is_id(word))) and \
+                (not(word in self.__symbols_list)) and not (self.is_exp(word)):
+            return False
+        else:
+            return True
         
 
     def tokenize_exp(self, exp):  # to be postponed
         s = exp
-        symb_found = False
-        while(len(s) > 1):
-            for i in range(len(s)):
-                if s[i] == ":" and i != (len(s) - 1):      
-                    if s[i+1] == '=':
-                        symb_found = True
-                        symbol = ":="
-                        sub = s[0:i - 1]
-                        self.classify(sub)
+        done = False
+        try:
+            while(len(s) > 0 and not done): # suspected
+                for i in range(len(s)):
+                    if s[i] == ":" and i != (len(s) - 1):      
+                        if s[i+1] == '=':
+                            symb_found = True
+                            symbol = ":="
+                            sub = s[0:i]
+                            print("String", s)
+                            self.classify(sub)
+                            print(sub)
+                            token_obj = Token_(symbol, 'special symbol')
+                            self.__tokens_list.append(token_obj)
+                            #i += 2
+                            s = s[i + 2:]
+                            break
+
+                        else:
+                            self.generate_erorr() 
+                            # break        
+                    elif s[i] in self.__symbols_list:
+                        sub = s[0:i]
+                        self.classify(sub) # classify not symbol  
+                        print(sub)
+                        symbol = s[i]
                         token_obj = Token_(symbol, 'special symbol')
                         self.__tokens_list.append(token_obj)
-                        i += 2
+                        s = s[i + 1:]
+                        break
                     else:
-                        self.generate_erorr() 
-                        # break        
-                elif s[i] in self.__symbols_list:
-                    symb_found = True
-                    sub = s[0:i-1]
-                    self.classify(sub) # classify not symbol   
-                    symbol = s[i]
-                    token_obj = Token_(symbol, 'special symbol')
-                    self.__tokens_list.append(token_obj)
+                        pass
                 else:
-                    pass
-            
-                if symb_found:
-                    s = s[i:]
-                    break
+                    for symb in self.__symbols_list:
+                        if symb in s:
+                            print("error")
+                        else:
+                            self.classify(s)
+                            s = ""
+                            done = True
+                            
                 
-                
-    
-
-        
-        
+                   
+        except Exception as e:
+            print(e.__str__)
+                    
 
     def classify(self, token):
         if not(self.check_word(token)):
             #print('error----->', token) # will be modified to generate error message
+            if token == "":
+                return
             token_obj = Token_(token, 'wrong-token')
             self.__tokens_list.append(token_obj)
 
         elif self.is_keyword(token):
-            token_obj = Token_(token, 'keyword')
-            self.__tokens_list.append(token_obj)
+            if token == 'if' or token == 'IF':
+                token_obj = Token_(token, 'IF Token')
+                self.__tokens_list.append(token_obj)
+            elif token == 'else' or token == "ELSE":
+                token_obj = Token_(token, 'ELSE Token')
+                self.__tokens_list.append(token_obj)
+            else:
+                token_obj = Token_(token, 'keyword')
+                self.__tokens_list.append(token_obj)
         elif self.is_id(token):
             token_obj = Token_(token, 'identifier')
             self.__tokens_list.append(token_obj)
