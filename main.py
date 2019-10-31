@@ -9,24 +9,35 @@ from tokenizer import *
 from results_table import *
 
 
-FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))
+#FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main.ui"))
 
 
-class MainApp(QMainWindow, FORM_CLASS):
+class MainApp(QMainWindow):
 
     def __init__(self, parent= None):
         super(MainApp, self).__init__(parent)
         QMainWindow.__init__(self)
-        self.setupUi(self)
+        #self.setupUi(self)
         self.setup_Ui()
         self.init_Buttons()
 
     def setup_Ui(self):
+        self.setFixedSize(867, 526)
+        self.create_widgets()
         self.center_window()
         #self.setFixedSize(self.window_width, self.window_height)
 
         self.setWindowTitle('Compiler Scanner')
 
+
+    def create_widgets(self):
+        self.textBox = QTextEdit(self)
+        self.textBox.move(20, 20)
+        self.textBox.setFixedSize(621, 441)
+        self.tokenize_button = QPushButton('Tokenize', self)
+        self.tokenize_button.move(700, 50)
+        self.tokenize_button.setFixedSize(121, 31)
+        
 
 
     def center_window(self):
