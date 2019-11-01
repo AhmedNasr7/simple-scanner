@@ -22,6 +22,9 @@ class Tokenizer(QObject):
         self.__symbols_list = ['+', '-', '*', '/', '=', '<', '>', '(', ')', ';', ':=']
         #self.__keywords_list = []
         self.__tokens_list = []
+
+        self.__comment_flag = False
+
    
 
         
@@ -78,7 +81,7 @@ class Tokenizer(QObject):
                     return False
 
 
-    def check_word(self, word): 
+    def check_word(self, word):
         if (not(self.is_keyword(word))) and (not(self.is_digit(word))) and (not(self.is_id(word))) and \
                 (not(word in self.__symbols_list)) and not (self.is_exp(word)):
             return False
@@ -92,7 +95,7 @@ class Tokenizer(QObject):
         try:
             while(len(s) > 0 and not done): # suspected
                 for i in range(len(s)):
-                    if s[i] == ":" and i != (len(s) - 1):      
+                    if s[i] == ":" and i != (len(s) - 1) and not self.__comment_flag:
                         if s[i+1] == '=':
                             symb_found = True
                             symbol = ":="
@@ -109,7 +112,7 @@ class Tokenizer(QObject):
                         else:
                             self.generate_erorr() 
                             # break        
-                    elif s[i] in self.__symbols_list:
+                    elif s[i] in self.__symbols_list and not self.__comment_flag:
                         sub = s[0:i]
                         self.classify(sub) # classify not symbol  
                         print(sub)
@@ -118,8 +121,14 @@ class Tokenizer(QObject):
                         self.__tokens_list.append(token_obj)
                         s = s[i + 1:]
                         break
+                    elif s[i] == "{":
+                        self.__comment_flag = True
+                        continue
+                    elif s[i] == "}" and self.__comment_flag:
+                        self.__comment_flag = False
+                        continue
                     else:
-                        pass
+                        continue
                 else:
                     for symb in self.__symbols_list:
                         if symb in s:
@@ -180,7 +189,16 @@ class Tokenizer(QObject):
 
         for line_words in lines_list: # a line_words is a list of words
             for word in line_words:
-                self.classify(word)
+                if word == "{":
+                    self.__comment_flag = True
+                    continue
+                elif word == "}" and self.__comment_flag:
+                    self.__comment_flag = False
+                    continue
+                elif self.__comment_flag:
+                    continue
+                else:
+                    self.classify(word)
 
            
         #printing tokens values and types --> will be replaced by generating it in GUI 
