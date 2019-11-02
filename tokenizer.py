@@ -29,6 +29,25 @@ class Tokenizer(QObject):
 
    
 
+
+    def filter_comments(self, input):
+        start = -1
+        end = -1
+        for i in range(len(input)):
+
+            if input[i] == '{':
+                start = i
+            if start > -1 and input[i] == '}':
+                end = i
+            if start > -1 and end > -1:
+                new_input = input[0:start] + input[end + 1:]
+                return new_input
+            
+        return input
+                
+                
+            
+                
         
 
     def split_to_lines(self, input):
@@ -110,9 +129,7 @@ class Tokenizer(QObject):
                             symb_found = True
                             symbol = ":="
                             sub = s[0:i]
-                            print("String", s)
                             self.classify(sub)
-                            print(sub)
                             token_obj = Token_(symbol, 'special symbol')
                             self.__tokens_list.append(token_obj)
                             #i += 2
@@ -128,7 +145,6 @@ class Tokenizer(QObject):
                     elif s[i] in self.__symbols_list and not self.__comment_flag:
                         sub = s[0:i]
                         self.classify(sub) # classify not symbol  
-                        print(sub)
                         symbol = s[i]
                         token_obj = Token_(symbol, 'special symbol')
                         self.__tokens_list.append(token_obj)
@@ -202,7 +218,8 @@ class Tokenizer(QObject):
 
 
     def tokenize(self):
-        lines = self.split_to_lines(self.__input) # list of lines
+        filterd_input = self.filter_comments(self.__input)
+        lines = self.split_to_lines(filterd_input) # list of lines
         lines_list = self.split_on_spaces(lines) # list of lists of words
 
         for line_words in lines_list: # a line_words is a list of words
