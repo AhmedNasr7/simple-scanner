@@ -56,6 +56,7 @@ class MainApp(QMainWindow):
         code_text = self.textBox.toPlainText()
         self.tokenizer = Tokenizer(code_text)
         self.tokenizer.pass_data_signal.connect(self.receive_data)
+        self.tokenizer.error_signal.connect(self.show_msgBox)
         self.tokenizer.tokenize()
 
 
@@ -69,6 +70,17 @@ class MainApp(QMainWindow):
         tablemodel = TableView(tokens_list)
         self.table = ResultsTable(tablemodel)
         self.table.show()
+
+    
+    @pyqtSlot(str)
+    def show_msgBox(self, msg):
+        print(msg)
+        self.msgBox = QMessageBox()
+        self.msgBox.setWindowTitle("Error!")
+        self.msgBox.setIcon(QMessageBox.Warning)
+        self.msgBox.setText(msg)
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+        self.msgBox.exec_()  
         
 
 

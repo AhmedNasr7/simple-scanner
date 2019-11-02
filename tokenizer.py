@@ -7,6 +7,8 @@ from token_module import *
 class Tokenizer(QObject):
 
     pass_data_signal = pyqtSignal(list)
+    error_signal = pyqtSignal(str)
+
 
     def __init__(self, input):
 
@@ -76,7 +78,15 @@ class Tokenizer(QObject):
         if (not(self.is_keyword(word))) and (not(self.is_digit(word))) and (not(self.is_id(word))) and \
                 (not(word in self.__symbols_list)):
                 if len(word) > 1:
-                    return True
+                    count = 0
+                    for s in self.__symbols_list:
+                        if word.count(s) > 0:
+                            count += 1
+                    
+                    if count > 0:
+                        return True
+                    else:
+                        return False
                 else:
                     return False
 
@@ -110,7 +120,10 @@ class Tokenizer(QObject):
                             break
 
                         else:
-                            self.generate_erorr() 
+                            if exp.count('{') > 0 or exp.count('}') > 0:
+                                pass
+                            else:
+                                self.generate_erorr('Error! illegal identifier') 
                             # break        
                     elif s[i] in self.__symbols_list and not self.__comment_flag:
                         sub = s[0:i]
@@ -149,8 +162,12 @@ class Tokenizer(QObject):
             #print('error----->', token) # will be modified to generate error message
             if token == "":
                 return
-            token_obj = Token_(token, 'wrong-token')
-            self.__tokens_list.append(token_obj)
+            if token.count('{') > 0 or token.count('}') > 0:
+                pass
+            else:
+                self.generate_erorr('Error! ' + token + ' is a wrong token!')
+            #token_obj = Token_(token, 'wrong-token')
+            #self.__tokens_list.append(token_obj)
 
         elif self.is_keyword(token):
             if token == 'if' or token == 'IF':
@@ -178,8 +195,9 @@ class Tokenizer(QObject):
             elif token == "\t" or token == "\n" or token == "\r" or token == " ":
                 pass
             else:
-                token_obj = Token_(token, 'unknown-token')
-                self.__tokens_list.append(token_obj)
+                self.generate_erorr('Error: the token is unkown')
+                #token_obj = Token_(token, 'unknown-token')
+                #self.__tokens_list.append(token_obj)
 
 
 
@@ -210,11 +228,16 @@ class Tokenizer(QObject):
         
 
     def send_data(self):
-        self.pass_data_signal.emit(self.__tokens_list)
+
+        try:
+            self.pass_data_signal.emit(self.__tokens_list)
+        except Exception as e:
+            pass
 
     
-    def generate_erorr(self):
-        pass 
+    def generate_erorr(self, error_msg):
+        self.error_signal.emit(error_msg)
+        self.pass_data_signal = None
 
 
         
