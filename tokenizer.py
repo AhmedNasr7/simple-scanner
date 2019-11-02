@@ -165,7 +165,7 @@ class Tokenizer(QObject):
             if token.count('{') > 0 or token.count('}') > 0:
                 pass
             else:
-                self.generate_erorr('Error! ' + token + ' is a wrong token!')
+                self.generate_erorr("Error! '" + token + "' is a wrong token!")
             #token_obj = Token_(token, 'wrong-token')
             #self.__tokens_list.append(token_obj)
 
